@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# TensorBoard Logs (these can be massive and aren't typically checked into source control)
+logs/
+
+# Model Checkpoints (Ignore all except the final trained model)
+models/*.pth
+!models/dqn_final.pth
+
+# Gameplay Videos (Ignore all except the highlighted episode)
+gameplay_videos/*.mp4
+!gameplay_videos/rl-video-episode-2.mp4
+
+# Project specific exclusions requested by the user
+plan.md
+RULE.md
+ARCHITECTURE.md
+GEMINI.md
+PROJECT_PLAN.md
+
+# OS generated files
+.DS_Store
+Thumbs.db
