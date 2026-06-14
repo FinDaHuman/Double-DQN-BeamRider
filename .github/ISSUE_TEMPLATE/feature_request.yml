@@ -1,0 +1,24 @@
+name: Feature Request
+description: Suggest an idea for this educational repository.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement!
+        *Reminder: This is a strict educational baseline. New RL techniques (like Dueling DQN or PER) must be implemented as optional extensions that do not obscure the core Double DQN logic.*
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: defense-justification
+    attributes:
+      label: Educational / Oral Defense Justification
+      description: Explain *why* this feature is mathematically or conceptually necessary.
+      placeholder: E.g., Dueling architectures help the agent learn the intrinsic value of a state without having to learn the effect of every action...
+    validations:
+      required: true

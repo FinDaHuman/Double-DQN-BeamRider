@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software or find it helpful for your research, please cite it as below."
+authors:
+  - family-names: "Double DQN Beam Rider Contributors"
+title: "Double-DQN-BeamRider: A From-Scratch RL Educational Implementation"
+version: 1.0.0
+date-released: 2026-06-13
+url: "https://github.com/FinDaHuman/Double-DQN-BeamRider"
+repository-code: "https://github.com/FinDaHuman/Double-DQN-BeamRider"
+keywords:
+  - reinforcement-learning
+  - deep-learning
+  - atari
+  - dqn
+  - pytorch
+license: "MIT"
