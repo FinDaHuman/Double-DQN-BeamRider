@@ -12,10 +12,12 @@ ENV/
 
 # TensorBoard Logs
 apps/beam_rider/logs/
+logs/
 
 # Model Checkpoints
 apps/beam_rider/models/*.pth
 !apps/beam_rider/models/dqn_final.pth
+models/
 
 # Gameplay Videos
 assets/gameplay_videos/*.mp4
@@ -31,3 +33,6 @@ PROJECT_PLAN.md
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Ignored Tasks
+ToDoList.txt

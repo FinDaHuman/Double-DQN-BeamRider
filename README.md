@@ -1,124 +1,58 @@
-# Deep Reinforcement Learning: Double DQN for Atari Beam Rider
+# Deep Reinforcement Learning: Mastering Beam Rider (Unrestricted Branch)
 
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+![Stable-Baselines3](https://img.shields.io/badge/Stable--Baselines3-201547?style=for-the-badge&logo=python&logoColor=white)
 ![Gymnasium](https://img.shields.io/badge/Gymnasium-000000?style=for-the-badge&logo=openai&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-🚀 **Peak Agent Score: 3,560** 
-*(Achieved after 2,000,000 training frames. A massive ~10x improvement over the random baseline!)*
+🚀 **Current Focus: Defeating the Sector Sentinel with RecurrentPPO**
 
-A from-scratch PyTorch implementation of a **Double Deep Q-Network (DDQN)** trained to master the classic Atari 2600 game *Beam Rider*. 
+Welcome to the **Unrestricted RL** branch of the Beam Rider project. 
 
-This project was built as a rigorous university assignment focused on the **explainability and mathematical foundations** of Deep Reinforcement Learning. As such, **no high-level black-box RL libraries** (like Stable-Baselines3 or RLlib) were used. The Bellman update, experience replay buffer, preprocessing pipeline, and Convolutional Neural Networks were built entirely from the ground up.
-
----
-
-## 🏗️ Monorepo Codebase Structure
-
-The project is organized as a structurally precise monorepo, cleanly separating the reusable reinforcement learning framework from the environment-specific code and application scripts:
-
-```text
-/
-├── apps/
-│   └── beam_rider/              # Application entry points and configs
-│       ├── configs/             # Centralized hyperparameters
-│       ├── train.py             # Entry point for training
-│       ├── evaluate.py          # Entry point for running test episodes
-│       ├── run_ablations.py     # Automates Phase 7 Ablation Studies
-│       ├── record_video.py      # Generates gameplay mp4s
-│       ├── generate_plots.py    # Parses TensorBoard logs to PNGs
-│       ├── models/              # Saved .pth weights
-│       └── logs/                # TensorBoard event files
-├── packages/
-│   ├── rl_core/                 # Reusable Deep RL algorithms
-│   │   ├── agents/              # DQN and Double DQN agent logic
-│   │   ├── networks/            # PyTorch CNN architectures
-│   │   ├── replay/              # Experience replay memory
-│   │   ├── training/            # Training loop orchestration
-│   │   └── evaluation/          # Evaluation orchestration
-│   └── atari_env/               # Environment specific wrappers
-│       └── environment/         # Grayscale, Resize, Skip, Stack
-├── docs/
-│   └── reports/                 # Markdown analysis reports and graphs
-└── assets/
-    └── gameplay_videos/         # Rendered best-attempt gameplay
-```
+While the `master` branch contains a strict, from-scratch PyTorch implementation of Double DQN for educational purposes, this branch lifts those academic restrictions. Our new goal is **maximum performance** and solving the game's hard exploration traps using state-of-the-art ecosystem tools.
 
 ---
 
-## 📊 Results & Performance
+## 🧠 The Challenge: The "Blocker" Trap
 
-After training for 2 million frames (~12 hours on a modern GPU), the Double DQN agent successfully learned complex spatial-temporal features, evasive maneuvers, and shooting accuracy.
+During our initial DQN evaluation, we discovered a significant "cognitive wall" for standard agents: The **Sector Sentinel**.
 
-| Metric | Score | Context |
-| :--- | :--- | :--- |
-| **Random Policy Baseline** | 363.9 | Completely random button presses. |
-| **Agent Average Reward** | **1058.40** | Average over 10 strict evaluation episodes ($\epsilon = 0.05$). |
-| **Agent Peak Reward** | **3560.00** | Best recorded run. The agent mastered basic sector survival. |
-| *DeepMind DQN (2015)* | *6846.0* | *For context: the original Nature paper trained for 50M frames.* |
+The Sentinel (the boss at the end of each sector) does not attack directly. Instead, it spawns fast-moving indestructible "Green Blockers" directly on the player's position. Defeating the boss requires a complex, delayed-reward sequential strategy:
+1. **Wait** on a beam to bait the Blocker.
+2. **Dodge** to an adjacent beam right as it locks on.
+3. **Shoot** a limited-supply torpedo at the Sentinel.
 
-*(A recorded gameplay video of the 3560-point run is available in the `assets/gameplay_videos/` directory).*
+Because standard DQN relies on 4-frame stacking (which only provides immediate velocity, not long-term memory) and $\epsilon$-greedy exploration (random noise), it statistically fails to discover or execute this multi-step sequence, resulting in repeated deaths.
 
 ---
 
-## 🧠 The Algorithm & Math
+## 🛠️ The Solution: RecurrentPPO (LSTM)
 
-The agent learns using **Q-Learning**, a model-free reinforcement learning algorithm. The goal is to learn the optimal action-value function $Q^*(s, a)$, which represents the maximum expected cumulative reward starting from state $s$ and taking action $a$.
+To overcome this trap, we have transitioned from a custom DQN to **Stable-Baselines3** and **sb3-contrib**, implementing a **Recurrent Proximal Policy Optimization (PPO)** agent.
 
-### The Bellman Equation
-The agent updates its Q-values by minimizing the Huber Loss between its current prediction and the Bellman target:
-$$Target = R_{t+1} + \gamma \max_{a'} Q(S_{t+1}, a'; \theta^-)$$
-
-### Core Architectural Enhancements
-1.  **Convolutional Neural Network (CNN):** A 3-layer CNN processes the stacked visual frames to extract features, outputting Q-values for all 9 joystick actions.
-2.  **Experience Replay Buffer:** Transitions $(s, a, r, s', done)$ are stored in a cyclic buffer (size 100k). Training on randomized mini-batches of 32 breaks correlation and stabilizes gradients.
-3.  **Target Network:** A secondary "frozen" network ($\theta^-$) evaluates the next state. It is synchronized with the main online network ($\theta$) every 10,000 steps.
-4.  **Double DQN (DDQN):** Solves standard DQN overestimation bias by decoupling action *selection* from *evaluation*:
-    *   *Select* best action using Online Net: $a^* = \arg\max_{a} Q(S_{t+1}, a; \theta)$
-    *   *Evaluate* action using Target Net: $Q(S_{t+1}, a^*; \theta^-)$
-
-### The Preprocessing Pipeline
-Feeding `210x160` RGB images at 60 FPS directly into a CNN is computationally prohibitive and breaks the Markov assumption (a static frame lacks velocity). The `packages/atari_env` handles:
-*   **Grayscale & Resize:** Reduced to `84x84` grayscale (93% reduction in state space).
-*   **Frame Skip & Max-Pool:** Actions are repeated for 4 frames. The last two frames are max-pooled to prevent Atari sprite flickering.
-*   **Frame Stacking:** The 4 most recent frames are stacked into a `(4, 84, 84)` tensor, providing the network with temporal context (motion and velocity).
-
----
-
-## 🔬 Ablation Studies
-To scientifically prove the necessity of the chosen architecture, the repository includes automated ablation studies (`apps/beam_rider/run_ablations.py`). The results (`docs/reports/ablation_study.md`) empirically prove:
-*   **Without Target Network:** Loss diverges to infinity; rewards flatline near 200.
-*   **Without Replay Buffer:** Catastrophic forgetting; agent overfits to sequential frames and fails to generalize.
-*   **Without Frame Stacking:** Agent becomes blind to velocity, failing completely at evasive maneuvers.
+*   **LSTM Memory:** By replacing standard linear layers with a Long Short-Term Memory (LSTM) network, the agent gains true temporal memory. It can remember baiting a blocker dozens of frames ago, allowing it to execute the delayed "wait -> dodge -> shoot" sequence.
+*   **Hardware Optimized:** The training script (`apps/beam_rider/train_sb3_lstm.py`) is explicitly configured to run safely on lower-end laptop hardware. It uses `DummyVecEnv` to prevent multiprocessing freezes and utilizes smaller batch sizes to avoid Out-Of-Memory errors.
 
 ---
 
 ## ⚙️ How to Run
 
-### 1. Install Dependencies
+### 1. Install the Unrestricted Dependencies
+This branch requires the Stable-Baselines3 ecosystem and compatible environment wrappers.
 ```bash
-pip install -r requirements.txt
+pip install "stable-baselines3[extra]>=2.0.0" sb3-contrib "ale-py==0.8.1" "numpy<2.0.0"
 ```
 
-### 2. Train the Agent
-Hyperparameters can be adjusted in `apps/beam_rider/configs/dqn_config.py`.
+### 2. Train the LSTM Agent
+We have provided a hardware-safe training script. (For best results, allow this to run for at least 10,000,000 timesteps).
 ```bash
-cd apps/beam_rider
-python train.py
+python apps/beam_rider/train_sb3_lstm.py
 ```
 
-### 3. Evaluate the Agent
-Runs the model saved at `models/dqn_final.pth` with a frozen network and minimal exploration ($\epsilon = 0.05$).
+### 3. Evaluate and Record
+Watch the agent attempt to defeat the Sector Sentinel.
 ```bash
-cd apps/beam_rider
-python evaluate.py
-```
-
-### 4. Record a Gameplay Video
-```bash
-cd apps/beam_rider
-python record_video.py
+python apps/beam_rider/evaluate_sb3.py
 ```
 
 ---
-*Developed as a University Deep Reinforcement Learning Assignment.*
+*This branch represents the evolution from educational algorithms to state-of-the-art application.*
