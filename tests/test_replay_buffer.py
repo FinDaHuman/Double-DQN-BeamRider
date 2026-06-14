@@ -16,11 +16,10 @@ def test_replay_buffer_push_and_sample():
 
     states, actions, rewards, next_states, dones = buffer.sample(3)
     assert states.shape == (3, 4, 84, 84), "State batch shape mismatch"
-    assert actions.shape == (3, 1), "Action batch shape mismatch"
-    assert rewards.shape == (3, 1), "Reward batch shape mismatch"
-    assert next_states.shape == (
-        3, 4, 84, 84), "Next State batch shape mismatch"
-    assert dones.shape == (3, 1), "Done batch shape mismatch"
+    assert actions.shape == (3,), "Action batch shape mismatch"
+    assert rewards.shape == (3,), "Reward batch shape mismatch"
+    assert next_states.shape == (3, 4, 84, 84), "Next State batch shape mismatch"
+    assert dones.shape == (3,), "Done batch shape mismatch"
 
 
 def test_replay_buffer_capacity():
