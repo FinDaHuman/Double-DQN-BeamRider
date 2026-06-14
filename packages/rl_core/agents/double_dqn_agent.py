@@ -5,7 +5,6 @@ Contains the Double DQN Agent logic, extending the baseline DQN.
 """
 
 import torch
-import numpy as np
 
 from agents.dqn_agent import DQNAgent
 from replay.replay_buffer import ReplayBuffer

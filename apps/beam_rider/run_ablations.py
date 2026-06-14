@@ -73,7 +73,9 @@ def main():
         f.write("## 1. Without Target Network\n")
         f.write(
             "- **Method:** Target network updated every step (`target_update_freq = 1`).\n")
-        f.write("- **Expected Result:** High instability, catastrophic divergence due to the moving target problem.\n")
+        f.write(
+            "- **Expected Result:** High instability, catastrophic divergence "
+            "due to the moving target problem.\n")
         f.write("- **Actual Observation:** (Check TensorBoard `Train/Episode_Reward` and `Train/Loss` curves and document here).\n\n")
 
     # --- 2. Ablation: No Experience Replay ---
@@ -88,8 +90,12 @@ def main():
 
     with open(report_path, "a") as f:
         f.write("## 2. Without Experience Replay\n")
-        f.write("- **Method:** Replay buffer capacity reduced to the batch size (32), forcing on-policy updates with highly correlated data.\n")
-        f.write("- **Expected Result:** Catastrophic forgetting, agent forgets how to play states it hasn't seen in the last few seconds.\n")
+        f.write(
+            "- **Method:** Replay buffer capacity reduced to the batch size (32), "
+            "forcing on-policy updates with highly correlated data.\n")
+        f.write(
+            "- **Expected Result:** Catastrophic forgetting, agent forgets how "
+            "to play states it hasn\'t seen in the last few seconds.\n")
         f.write("- **Actual Observation:** (Check TensorBoard and document here).\n\n")
 
     # --- 3. Ablation: No Frame Stacking ---
@@ -104,7 +110,9 @@ def main():
     with open(report_path, "a") as f:
         f.write("## 3. Without Frame Stacking\n")
         f.write("- **Method:** Changed `frame_stack` from 4 to 1.\n")
-        f.write("- **Expected Result:** Agent fails to avoid moving enemies/bullets because a single static frame violates the Markov Property (cannot perceive motion).\n")
+        f.write(
+            "- **Expected Result:** Agent fails to avoid moving enemies/bullets "
+            "because a single static frame violates the Markov Property.\n")
         f.write("- **Actual Observation:** (Check TensorBoard and document here).\n\n")
 
     print("\nAll ablations completed! Please check TensorBoard to analyze the training curves.")
