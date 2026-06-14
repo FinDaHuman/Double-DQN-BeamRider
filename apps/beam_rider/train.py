@@ -9,6 +9,8 @@ Usage:
 python train.py
 """
 
+from training.trainer import Trainer
+from configs.dqn_config import CONFIG
 import os
 import sys
 
@@ -18,13 +20,12 @@ sys.path.append(os.path.join(REPO_ROOT, 'packages', 'rl_core'))
 sys.path.append(os.path.join(REPO_ROOT, 'packages', 'atari_env'))
 sys.path.append(os.path.dirname(__file__))
 
-from configs.dqn_config import CONFIG
-from training.trainer import Trainer
 
 def main():
     print(f"Loading Configuration for {CONFIG['env_name']}...")
     trainer = Trainer(CONFIG)
     trainer.train()
+
 
 if __name__ == "__main__":
     main()

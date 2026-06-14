@@ -8,23 +8,25 @@ import numpy as np
 import collections
 import random
 
+
 class ReplayBuffer:
     """
     Purpose:
         To implement an Experience Replay Buffer that stores and samples game transitions.
         This breaks the correlation between sequential game frames and improves data efficiency.
-        
+
     Inputs:
         capacity (int): The maximum number of transitions the buffer can hold.
-        
+
     Outputs:
         An instantiated ReplayBuffer object.
-        
+
     Usage:
         buffer = ReplayBuffer(capacity=10000)
         buffer.push(state, action, reward, next_state, done)
         batch = buffer.sample(batch_size=32)
     """
+
     def __init__(self, capacity: int):
         """
         description: Initializes the cyclic replay buffer using a deque.
@@ -60,7 +62,7 @@ class ReplayBuffer:
         """
         batch = random.sample(self.buffer, batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
-        
+
         return (
             np.array(states),
             np.array(actions),

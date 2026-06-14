@@ -8,23 +8,25 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+
 class DQN(nn.Module):
     """
     Purpose:
-        To define the Convolutional Neural Network (CNN) architecture that approximates 
+        To define the Convolutional Neural Network (CNN) architecture that approximates
         the Q-value function Q(s, a) for the Beam Rider environment.
-        
+
     Inputs:
         input_shape (tuple): Shape of the stacked frames, e.g., (4, 84, 84).
         num_actions (int): The number of possible discrete actions.
-        
+
     Outputs:
         An instantiated DQN PyTorch Module.
-        
+
     Usage:
         network = DQN(input_shape=(4, 84, 84), num_actions=9)
         q_values = network(state_tensor)
     """
+
     def __init__(self, input_shape: tuple, num_actions: int):
         """
         description: Initializes the deep neural network layers.
@@ -34,7 +36,7 @@ class DQN(nn.Module):
         return values: None
         """
         super(DQN, self).__init__()
-        
+
         self.input_shape = input_shape
         self.num_actions = num_actions
 
@@ -57,7 +59,7 @@ class DQN(nn.Module):
 
     def _get_conv_output(self, shape):
         """
-        description: A helper function to dynamically calculate the size of the tensor 
+        description: A helper function to dynamically calculate the size of the tensor
                      after passing through the convolutional layers.
         parameters:
             shape (tuple): The input shape (C, H, W).
