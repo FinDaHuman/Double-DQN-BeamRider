@@ -7,7 +7,10 @@ import sys
 import torch
 import gymnasium as gym
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'rl_core'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'atari_env'))
+sys.path.append(os.path.dirname(__file__))
 from configs.dqn_config import CONFIG
 from agents.double_dqn_agent import DoubleDQNAgent
 from environment.preprocessing import MaxAndSkipEnv, GrayscaleResizeEnv, FrameStackEnv
@@ -29,7 +32,7 @@ def make_video_env(env_name, skip, stack, video_folder):
 
 def main():
     model_path = "models/dqn_final.pth"
-    video_dir = "gameplay_videos"
+    video_dir = "../../assets/gameplay_videos"
     os.makedirs(video_dir, exist_ok=True)
     
     if not os.path.exists(model_path):

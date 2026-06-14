@@ -14,7 +14,10 @@ import os
 import sys
 
 # Ensure src directory is in the path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'rl_core'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'atari_env'))
+sys.path.append(os.path.dirname(__file__))
 
 from configs.dqn_config import CONFIG
 from evaluation.evaluator import Evaluator
@@ -43,8 +46,8 @@ def main():
     print("--------------------------\n")
     
     # Save the results to the markdown report
-    report_path = "reports/evaluation_report.md"
-    os.makedirs("reports", exist_ok=True)
+    report_path = "../../docs/reports/evaluation_report.md"
+    os.makedirs("../../docs/reports", exist_ok=True)
     
     with open(report_path, "a") as f:
         f.write(f"## Evaluation: {CONFIG['agent_type']} (Final Model)\n")

@@ -13,7 +13,10 @@ import os
 import sys
 
 # Ensure src directory is in the path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'rl_core'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'atari_env'))
+sys.path.append(os.path.dirname(__file__))
 
 from configs.dqn_config import CONFIG
 from training.trainer import Trainer

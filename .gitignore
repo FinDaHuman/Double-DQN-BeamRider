@@ -10,16 +10,16 @@ env/
 venv/
 ENV/
 
-# TensorBoard Logs (these can be massive and aren't typically checked into source control)
-logs/
+# TensorBoard Logs
+apps/beam_rider/logs/
 
-# Model Checkpoints (Ignore all except the final trained model)
-models/*.pth
-!models/dqn_final.pth
+# Model Checkpoints
+apps/beam_rider/models/*.pth
+!apps/beam_rider/models/dqn_final.pth
 
-# Gameplay Videos (Ignore all except the highlighted episode)
-gameplay_videos/*.mp4
-!gameplay_videos/rl-video-episode-2.mp4
+# Gameplay Videos
+assets/gameplay_videos/*.mp4
+!assets/gameplay_videos/rl-video-episode-2.mp4
 
 # Project specific exclusions requested by the user
 plan.md

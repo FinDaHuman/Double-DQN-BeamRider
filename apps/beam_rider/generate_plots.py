@@ -32,7 +32,7 @@ def smooth(scalars, weight=0.85):
 
 def main():
     logs_base_dir = "logs"
-    reports_dir = "reports"
+    reports_dir = "../../docs/reports"
     os.makedirs(reports_dir, exist_ok=True)
     
     # We want to plot the main Double DQN run

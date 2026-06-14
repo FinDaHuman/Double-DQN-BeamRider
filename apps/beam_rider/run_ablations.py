@@ -16,7 +16,10 @@ import copy
 from datetime import datetime
 
 # Ensure src directory is in the path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'rl_core'))
+sys.path.append(os.path.join(REPO_ROOT, 'packages', 'atari_env'))
+sys.path.append(os.path.dirname(__file__))
 
 from configs.dqn_config import CONFIG
 from training.trainer import Trainer
@@ -43,8 +46,8 @@ def main():
     base_ablation_config["epsilon_decay_steps"] = 75_000  # Decay faster for short run
     base_ablation_config["learning_starts"] = 10_000
     
-    os.makedirs("reports", exist_ok=True)
-    report_path = "reports/ablation_study.md"
+    os.makedirs("../../docs/reports", exist_ok=True)
+    report_path = "../../docs/reports/ablation_study.md"
     
     # Initialize the report file
     with open(report_path, "w") as f:
